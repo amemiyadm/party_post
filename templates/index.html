@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>構築まとめ屋。</title>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="{{ url_for('static', filename='js/autocomplete_poke.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/autocomplete_item.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/autocomplete_tera.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/autocomplete_move.js') }}"></script>
+</head>
+
+<body>
+    <main>
+        <div id="warning-message">
+            管理者用の投稿フォームです。入力した内容はサイトに反映されるため慎重に入力してください。
+        </div>
+
+        <div id="image-drop-area">
+            レンタル画像から読み取る
+            <input type="file" id="image-upload" style="display: none;">
+        </div>
+
+        <form id="party-post" method="post" action="https://amemiyapoke.lolitapunk.jp/admin/models/save_by_admin.php">
+            <div>
+                <label for="rule">ルール</label>
+                <select name="rule" id="rule" required>
+                    <option value="">-----</option>
+                    <option value="single" {% if rule=='single' %}selected{% endif %}>シングル</option>
+                    <option value="double" {% if rule=='double' %}selected{% endif %}>ダブル</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="season">シーズン</label>
+                <select name="season" id="season" required>
+                    <option value="">-----</option>
+                    {% if season %}<option value="season{{ season }}" selected>シーズン{{ season }}</option>{% endif %}
+                </select>
+            </div>
+
+            <div>
+                <label for="regulation">レギュレーション</label>
+                <select name="regulation" id="regulation" required>
+                    <option value="">-----</option>
+                    {% if regulation %}<option value="{{ regulation }}" selected>レギュ{{ regulation }}</option>{% endif %}
+                </select>
+            </div>
+
+            <div>
+                <label for="rank">最終順位</label><br>
+                <input type="search" id="rank" name="rank" autocomplete="off" value="{{ rank }}" required>
+                <label for="rank">位</label>
+            </div>
+
+            <div>
+                <label for="url">記事URL</label>
+                <input type="search" id="url" name="url" autocomplete="off" value="{{ url }}" required>
+            </div>
+
+            <div>
+                <label for="title">タイトル</label>
+                <textarea id="title" name="title" autocomplete="off" required>{{ title }}</textarea>
+            </div>
+
+            <div>
+                <label for="name">制作者名</label>
+                <input type="search" id="name" name="name" autocomplete="off" value="{{ name }}" required>
+            </div>
+
+            <div id="rental-image" style="display: none;">
+                <img id="uploaded-image">
+            </div>
+
+            {% for i in range(1,7) %}
+            <div>
+                <label for="pokemon{{ i }}">ポケモン{{ i }}</label>
+                <div class="input-group">
+                    <span style="position: relative;">
+                        <input type="search" class="poke-input" id="pokemon{{ i }}" name="pokemon{{ i }}"
+                            autocomplete="off" placeholder="ポケモン名" value="{{ pokemon[i - 1] }}">
+                        <div id="pokemon{{ i }}suggestion" class="formSuggestion" style="display:none;"></div>
+                        <img id="poke-image{{ i }}" style="top:7px; right:7px; height: 20px; position: absolute;">
+                    </span>
+                    <span style="position: relative;">
+                        <input type="search" class="item-input" id="item{{ i }}" name="item{{ i }}" autocomplete="off"
+                            placeholder="もちもの" oninput="changeColor('item{{ i }}')">
+                        <img id="item-image{{ i }}" style="top:7px; right:7px; height: 20px; position: absolute;">
+                    </span>
+                    <span style="position: relative;">
+                        <input type="search" class="tera-input" id="tera{{ i }}" name="tera{{ i }}" autocomplete="off"
+                            placeholder="テラスタル" value="{{ tera[i - 1] }}">
+                        <img id="tera-image{{ i }}" style="top:7px; right:7px; height: 20px; position: absolute;">
+                    </span>
+                </div>
+
+                <div class="move-group">
+                    {% for j in range(1,5) %}
+                    <span style="position: relative;">
+                        <input type="search" id="move{{ i }}{{ j }}" class='move{{ j }} move-input'
+                            name='move{{ i }}{{ j }}' autocomplete='off' placeholder='わざ{{ j }}'>
+                        <img id="move-image{{ i }}{{ j }}"
+                            style="top:7px; right:7px; height: 20px; position: absolute;">
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <input type="submit" class="btn-blue" value="構築を投稿する">
+        </form>
+    </main>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
